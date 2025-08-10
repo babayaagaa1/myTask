@@ -1,0 +1,86 @@
+"use client"; // This is a client component
+import { useState } from 'react';
+
+export default function Home() {
+  const [task, setTask] = useState('');
+  const [todos, setTodos] = useState([]);
+
+  // Add new task
+  const addTodo = () => {
+    if (task.trim() === '') return; // ignore empty tasks
+    setTodos([...todos, { id: Date.now(), text: task, completed: false }]);
+    setTask('');
+  };
+
+  // Toggle completed status
+  const toggleTodo = (id) => {
+    setTodos(
+      todos.map(todo =>
+        todo.id === id? {...todo, completed:!todo.completed } : todo
+      )
+    );
+  };
+
+  // Delete a task
+  const deleteTodo = (id) => {
+    setTodos(todos.filter(todo => todo.id!== id));
+  };
+
+  // Handle Enter key press in input
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') addTodo();
+  };
+
+  return (
+    <div style={{ maxWidth: 400, margin: '50px auto', padding: 20, fontFamily: 'Arial, sans-serif', fontColor: 'pink'}}>
+      <h1>Simple To-Do App</h1>
+      <input
+        type="text"
+        value={task}
+        placeholder="Add a new task"
+        onChange={e => setTask(e.target.value)}
+        onKeyDown={handleKeyPress}
+        style={{ padding: '8px', width: '70%', marginRight: '10px' }}
+      />
+      <button onClick={addTodo} style={{ padding: '8px 12px' }}>Add</button>
+
+      <ul style={{ listStyle: 'none', padding: 0, marginTop: 20 }}>
+        {todos.map(todo => (
+          <li key={todo.id} style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            marginBottom: 10,
+            background: 'black', 
+            padding: '8px', 
+            borderRadius: '4px' 
+          }}>
+            <span 
+              onClick={() => toggleTodo(todo.id)} 
+              style={{ 
+                textDecoration: todo.completed? 'line-through' : 'none', 
+                cursor: 'pointer',
+                flexGrow: 1
+              }}
+            >
+              {todo.text}
+            </span>
+            <button 
+              onClick={() => deleteTodo(todo.id)} 
+              style={{ 
+                marginLeft: 10, 
+                background: 'red', 
+                color: 'black', 
+                border: 'none', 
+                borderRadius: 4, 
+                cursor: 'pointer'
+            }}
+              aria-label={`Delete task ${todo.text}`}
+            >
+              X
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
